@@ -8,12 +8,14 @@
 #                             Download Full State Data button)
 #   Box 2 Detailed .......... tab "State overview"  (totals strip, state row,
 #                             district table with Download + map beside it)
-#   Box 3 Activity trend .... tab "1-Day programme"
-#   Box 4 Group-wise ........ tab "1-Day programme"
-#   Box 5 Designation-wise .. tab "1-Day programme"
-#   Box 6 Assessment ........ tab "Assessment"
+#   Box 3 Activity trend .... tab "1-Day programme and assessment"
+#   Box 4 Group-wise ........ tab "1-Day programme and assessment"
+#   Box 5 Designation-wise .. tab "1-Day programme and assessment"
+#   Box 6 Assessment ........ tab "1-Day programme and assessment" (Box 6 is
+#                             about the 1-day programme only, so it sits here)
 # Extra (more than the doc asks, never less): full-screen "District map" tab,
-# "SMT programme" and "SLT programme" tabs, "Download data" tab.
+# "SMT and SLT programmes" tab, "Download data" tab.
+# Looker allows at most 5 tabs per dashboard.
 #
 # NO ACCESS RESTRICTION: any user can pick any state; every tab is visible.
 # Requires Looker 26.4+ for dashboard tabs, and the custom visualization in
@@ -41,14 +43,10 @@
     label: State overview
   - name: District map
     label: District map
-  - name: 1-Day programme
-    label: 1-Day programme
-  - name: SMT programme
-    label: SMT programme
-  - name: SLT programme
-    label: SLT programme
-  - name: Assessment
-    label: Assessment
+  - name: 1-Day programme and assessment
+    label: 1-Day programme and assessment
+  - name: SMT and SLT programmes
+    label: SMT and SLT programmes
   - name: Download data
     label: Download data
 
@@ -274,7 +272,7 @@
     custom_color: "#D97B34"
     note_state: collapsed
     note_display: hover
-    note_text: "One-day batches taken by SMTs. The SMTs' own 2-day training batches are on the SMT programme tab."
+    note_text: "One-day batches taken by SMTs. The SMTs' own 2-day training batches are on the SMT and SLT programmes tab."
     listen:
       state: dim_state.state_name
       district: district_map.district_label
@@ -450,12 +448,12 @@
     height: 9
 
   # =================================================================
-  # TAB: 1-DAY PROGRAMME  - Box 3, Box 4, Box 5
+  # TAB: 1-DAY PROGRAMME AND ASSESSMENT - Box 3, 4, 5 (Box 6 further down)
   # =================================================================
 
   - name: od_header
     type: text
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     title_text: "1-Day programme · this state only"
     body_text: |-
       One-day participant training, run by the state's master trainers (SMTs). Box 3 is the activity trend, Box 4 splits the same participants by service group, Box 5 by designation.
@@ -467,7 +465,7 @@
   - name: od_trained
     title: "1-Day Trained"
     type: single_value
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.one_day_trained]
@@ -488,7 +486,7 @@
   - name: od_batches
     title: "Batches taken by SMTs"
     type: single_value
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.one_day_batches]
@@ -509,7 +507,7 @@
   - name: od_per_batch
     title: "Participants per batch"
     type: single_value
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.avg_one_day_per_batch]
@@ -530,7 +528,7 @@
   - name: od_districts
     title: "Districts reached"
     type: single_value
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.districts_with_one_day, fact_batch_activity.designations_trained]
@@ -554,7 +552,7 @@
   - name: od_box3_trend
     title: "Box 3 · Activity trend - Batches and 1-Day Trained, by date"
     type: looker_line
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.batch_date, fact_batch_activity.one_day_batches, fact_batch_activity.one_day_trained]
@@ -613,7 +611,7 @@
   - name: od_box3_monthly
     title: "By month"
     type: looker_grid
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.batch_month, fact_batch_activity.one_day_batches, fact_batch_activity.one_day_trained]
@@ -641,7 +639,7 @@
   - name: od_box4_group_bar
     title: "Box 4 · Group-wise - 1-Day Trained by service group"
     type: looker_bar
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [dim_group.group_name, fact_batch_activity.one_day_trained]
@@ -670,7 +668,7 @@
   - name: od_box4_group_list
     title: "Box 4 · Group-wise list"
     type: looker_grid
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [dim_group.group_name, fact_batch_activity.one_day_trained, fact_batch_activity.designations_trained]
@@ -698,7 +696,7 @@
   - name: od_box5_designation_bar
     title: "Box 5 · Designation-wise - top 20 by 1-Day Trained"
     type: looker_bar
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [dim_designation.designation_name, fact_batch_activity.one_day_trained]
@@ -728,7 +726,7 @@
   - name: od_box5_designation_list
     title: "Box 5 · Designation-wise list (all designations)"
     type: looker_grid
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [dim_designation.designation_name, dim_group.group_name, fact_batch_activity.one_day_trained]
@@ -758,7 +756,7 @@
   - name: od_group_by_designation
     title: "Group against designation - 1-Day Trained"
     type: looker_grid
-    tab_name: 1-Day programme
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_batch_activity
     fields: [dim_designation.designation_name, dim_group.group_name, fact_batch_activity.one_day_trained]
@@ -784,12 +782,12 @@
     height: 9
 
   # =================================================================
-  # TAB: SMT PROGRAMME  - state master trainers
+  # TAB: SMT AND SLT PROGRAMMES - state master trainers
   # =================================================================
 
   - name: smt_header
     type: text
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     title_text: "SMT programme · state master trainers"
     body_text: |-
       Master trainers certified through the 2-day SMT programme, against the requirement to March 2027.
@@ -802,7 +800,7 @@
   - name: smt_certified
     title: "Total SMTs certified"
     type: single_value
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.smt_trained]
@@ -823,7 +821,7 @@
   - name: smt_training_batches
     title: "SMT training batches (2-day)"
     type: single_value
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.smt_batches]
@@ -844,7 +842,7 @@
   - name: smt_required
     title: "SMTs required by Mar '27"
     type: single_value
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_monthly_target
     fields: [fact_monthly_target.smt_required, fact_monthly_target.smt_batches_required]
@@ -866,7 +864,7 @@
   - name: smt_pct_certified
     title: "Progress against the requirement"
     type: single_value
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_monthly_target
     fields: [fact_monthly_target.pct_smt_certified, fact_monthly_target.smt_outstanding]
@@ -888,7 +886,7 @@
   - name: smt_trend
     title: "SMTs certified and training batches, by date"
     type: looker_line
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.batch_date, fact_batch_activity.smt_batches, fact_batch_activity.smt_trained]
@@ -944,7 +942,7 @@
   - name: smt_target_vs_actual
     title: "Monthly SMT target against actual"
     type: looker_column
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_monthly_target
     fields: [dim_month.month_label, dim_month.month_id, fact_monthly_target.smt_target, fact_monthly_target.smt_actual]
@@ -975,7 +973,7 @@
   - name: smt_by_district
     title: "SMTs by district"
     type: looker_bar
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [district_map.district_label, fact_batch_activity.smt_trained, fact_batch_activity.smt_batches]
@@ -1006,7 +1004,7 @@
   - name: smt_by_designation
     title: "SMTs by designation"
     type: looker_grid
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [dim_designation.designation_name, dim_group.group_name, fact_batch_activity.smt_trained]
@@ -1035,7 +1033,7 @@
   - name: smt_certification_outcome
     title: "SMT certification outcome"
     type: looker_column
-    tab_name: SMT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.programme_type, fact_assessment.certified_count, fact_assessment.not_certified_count]
@@ -1064,17 +1062,17 @@
     height: 7
 
   # =================================================================
-  # TAB: SLT PROGRAMME  - state lead trainers
+  # TAB: SMT AND SLT PROGRAMMES (cont.) - state lead trainers
   # =================================================================
 
   - name: slt_header
     type: text
-    tab_name: SLT programme
+    tab_name: SMT and SLT programmes
     title_text: "SLT programme · state lead trainers"
     body_text: |-
       **Total SLT is not tracked yet** - the source has no SLT certification feed, so it reads **Pending** rather than a guessed number.
       The requirement to March 2027 comes from the state plan.
-    row: 0
+    row: 31
     col: 0
     width: 24
     height: 2
@@ -1082,7 +1080,7 @@
   - name: slt_certified
     title: "Total SLT"
     type: single_value
-    tab_name: SLT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.slt_certified]
@@ -1094,7 +1092,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 33
     col: 0
     width: 8
     height: 4
@@ -1102,7 +1100,7 @@
   - name: slt_required
     title: "SLTs required by Mar '27"
     type: single_value
-    tab_name: SLT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_monthly_target
     fields: [fact_monthly_target.slt_required]
@@ -1113,7 +1111,7 @@
     custom_color: "#AD7C25"
     listen:
       state: dim_state.state_name
-    row: 2
+    row: 33
     col: 8
     width: 8
     height: 4
@@ -1121,7 +1119,7 @@
   - name: slt_batches_required
     title: "SLT batches required"
     type: single_value
-    tab_name: SLT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_monthly_target
     fields: [fact_monthly_target.slt_batches_required]
@@ -1132,7 +1130,7 @@
     custom_color: "#12233B"
     listen:
       state: dim_state.state_name
-    row: 2
+    row: 33
     col: 16
     width: 8
     height: 4
@@ -1140,7 +1138,7 @@
   - name: slt_demo_rows
     title: "Demo placeholder rows in the dataset (not an official figure)"
     type: single_value
-    tab_name: SLT programme
+    tab_name: SMT and SLT programmes
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.slt_demo_placeholder]
@@ -1156,24 +1154,24 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 6
+    row: 37
     col: 0
     width: 24
     height: 4
 
   # =================================================================
-  # TAB: ASSESSMENT  - Box 6 (1-day participant programme only)
+  # TAB: 1-DAY PROGRAMME AND ASSESSMENT (cont.) - Box 6 (1-day programme only)
   # =================================================================
 
   - name: as_header
     type: text
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     title_text: "Box 6 · Assessment and analysis - 1-Day participant programme"
     body_text: |-
       Covers **only the 1-day participant programme** and is kept separate from the master-trainer certification (Box 10, central dashboard).
       Baseline = assessed before the 1-day programme starts. Day-1 = assessed at the end of the day. Improvement = Day-1 minus Baseline.
       Marked CBC-only in the brief; shown to everyone for now because no access restriction is applied. Scores are demo until an assessment feed exists.
-    row: 0
+    row: 42
     col: 0
     width: 24
     height: 3
@@ -1181,7 +1179,7 @@
   - name: as_baseline
     title: "Baseline survey"
     type: single_value
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.avg_baseline_score]
@@ -1195,7 +1193,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 3
+    row: 45
     col: 0
     width: 6
     height: 3
@@ -1203,7 +1201,7 @@
   - name: as_day1
     title: "Day-1 assessment"
     type: single_value
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.avg_day1_score]
@@ -1217,7 +1215,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 3
+    row: 45
     col: 6
     width: 6
     height: 3
@@ -1225,7 +1223,7 @@
   - name: as_improvement
     title: "Baseline vs Day-1 improvement"
     type: single_value
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.avg_improvement, fact_assessment.improvement_pct]
@@ -1242,7 +1240,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 3
+    row: 45
     col: 12
     width: 6
     height: 3
@@ -1250,7 +1248,7 @@
   - name: as_participants
     title: "Participants assessed"
     type: single_value
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.participants_assessed]
@@ -1264,7 +1262,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 3
+    row: 45
     col: 18
     width: 6
     height: 3
@@ -1272,7 +1270,7 @@
   - name: as_comparison_chart
     title: "Baseline vs Day-1 comparison"
     type: looker_column
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.assessment_date, fact_assessment.avg_baseline_score, fact_assessment.avg_day1_score, fact_assessment.avg_improvement]
@@ -1296,7 +1294,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 6
+    row: 48
     col: 0
     width: 14
     height: 9
@@ -1304,7 +1302,7 @@
   - name: as_detail
     title: "Assessment detail"
     type: looker_grid
-    tab_name: Assessment
+    tab_name: 1-Day programme and assessment
     model: state_dashboard
     explore: fact_assessment
     fields: [fact_assessment.assessment_date, fact_assessment.participants_assessed, fact_assessment.avg_baseline_score,
@@ -1327,7 +1325,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 6
+    row: 48
     col: 14
     width: 10
     height: 9
