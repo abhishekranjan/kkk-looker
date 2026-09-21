@@ -435,6 +435,35 @@ view: fact_batch_activity {
     label: "SLT demo placeholder rows"
   }
 
+  # ---- State dashboard: district report and recency --------------------------
+
+  measure: last_one_day_date {
+    type: date
+    sql: MAX(CASE WHEN ${batch_type} = 'One-Day' AND ${participants_value} > 0 THEN ${batch_date} END) ;;
+    label: "Last 1-Day batch"
+  }
+
+  measure: days_since_one_day {
+    type: number
+    sql: DATE_DIFF(CURRENT_DATE('Asia/Kolkata'), MAX(CASE WHEN ${batch_type} = 'One-Day' AND ${participants_value} > 0 THEN ${batch_date} END), DAY) ;;
+    label: "Days since last 1-Day batch"
+    value_format_name: decimal_0
+  }
+
+  measure: district_status {
+    type: string
+    sql: CASE
+           WHEN ${one_day_trained} > 0 THEN 'One-Day running'
+           WHEN ${smt_trained} > 0 THEN 'SMTs trained'
+           ELSE 'No activity yet'
+         END ;;
+    label: "Status"
+    html:
+      {% if value == 'One-Day running' %}<span style="background:#CFE7D9;color:#2F7D57;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;">One-Day running</span>
+      {% elsif value == 'SMTs trained' %}<span style="background:#F0E0BC;color:#AD7C25;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;">SMTs trained</span>
+      {% else %}<span style="background:#EEEBE3;color:#707A88;padding:2px 8px;border-radius:10px;white-space:nowrap;">No activity yet</span>{% endif %} ;;
+  }
+
   measure: pct_of_programme_target {
     type: number
     sql: ${one_day_trained} / 13000000.0 ;;
