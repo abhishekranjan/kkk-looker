@@ -12,7 +12,7 @@
  *
  * Options (set in the dashboard tile):
  *   orientation : horizontal | vertical
- *   sort        : value (largest first) | data (query order, e.g. months)
+ *   bar_order   : value (largest first) | data (query order, e.g. months)
  *   hide_zero   : drop rows that are zero / empty for the selected measure
  *   top_n       : 0 = all rows
  *   colors      : "smt:#AD7C25,one_day:#2F7D57"   (part of measure name : colour)
@@ -78,7 +78,7 @@
     label: 'KKK switch bars (toggle between measures)',
     options: {
       orientation: { type: 'string', label: 'Orientation', display: 'select', values: [{ 'Horizontal bars': 'horizontal' }, { 'Vertical columns': 'vertical' }], default: 'horizontal', section: 'Chart', order: 1 },
-      sort: { type: 'string', label: 'Order', display: 'select', values: [{ 'Largest first': 'value' }, { 'Query order': 'data' }], default: 'value', section: 'Chart', order: 2 },
+      bar_order: { type: 'string', label: 'Order', display: 'select', values: [{ 'Largest first': 'value' }, { 'Query order': 'data' }], default: 'value', section: 'Chart', order: 2 },
       hide_zero: { type: 'boolean', label: 'Hide zero / empty rows', default: true, section: 'Chart', order: 3 },
       top_n: { type: 'number', label: 'Show top N (0 = all)', default: 0, section: 'Chart', order: 4 },
       show_total: { type: 'boolean', label: 'Show total', default: true, section: 'Chart', order: 5 },
@@ -131,7 +131,7 @@
         return { row: row, i: i, name: (name === null || name === undefined || name === '') ? '(not recorded)' : name, v: num(row[metric.name]) };
       });
       if (config.hide_zero !== false) rows = rows.filter(function (r) { return r.v !== null && r.v > 0; });
-      if (config.sort !== 'data') rows.sort(function (a, b) { return (b.v || 0) - (a.v || 0) || a.i - b.i; });
+      if (config.bar_order !== 'data') rows.sort(function (a, b) { return (b.v || 0) - (a.v || 0) || a.i - b.i; });
       var total = rows.reduce(function (s, r) { return s + (r.v || 0); }, 0);
       var n = Number(config.top_n) || 0;
       if (n > 0) rows = rows.slice(0, n);
