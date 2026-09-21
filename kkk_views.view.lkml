@@ -5,20 +5,10 @@
 #
 # Replace `kkk_dataset` below if the dataset lands under a different name.
 #
-# MAPS: dim_state.location and dim_district.location are type: location, built
-# from the latitude/longitude columns. That makes both map tiles work as point
-# maps with nothing to upload.
-#
-# For a filled choropleth of India instead, add an India states TopoJSON to the
-# project and declare it in manifest.lkml:
-#
-#   map_layer: india_states {
-#     file: "india_states.topojson"
-#     property_key: "ST_NM"          # whichever property holds the state name
-#   }
-#
-# then put `map_layer_name: india_states` on dim_state.state_name and point the
-# map tile at that dimension instead of location.
+# MAPS: state_name and district_name carry map_layer_name, which draws filled
+# region maps from the two .topojson files declared in manifest.lkml. The
+# latitude/longitude columns and the `location` dimensions are kept as a
+# fallback - point a map tile at dim_state.location for a point map instead.
 # ============================================================================
 
 view: dim_state {
@@ -34,7 +24,7 @@ view: dim_state {
     type: string
     sql: ${TABLE}.state_name ;;
     label: "State / UT"
-    # map_layer_name: india_states   # uncomment after uploading the TopoJSON
+    map_layer_name: india_states
   }
   dimension: zone       { type: string sql: ${TABLE}.zone ;; }
   dimension: state_type { type: string sql: ${TABLE}.state_type ;; label: "State or UT" }
@@ -66,7 +56,12 @@ view: dim_state {
 view: dim_district {
   sql_table_name: kkk_dataset.dim_district ;;
   dimension: district_id   { primary_key: yes hidden: yes type: string sql: ${TABLE}.district_id ;; }
-  dimension: district_name { type: string sql: ${TABLE}.district_name ;; label: "District" }
+  dimension: district_name {
+    type: string
+    sql: ${TABLE}.district_name ;;
+    label: "District"
+    map_layer_name: india_districts
+  }
   dimension: state_id      { type: string sql: ${TABLE}.state_id ;; hidden: yes }
 
   dimension: latitude  { type: number sql: SAFE_CAST(${TABLE}.latitude AS FLOAT64) ;; hidden: yes }
