@@ -8,6 +8,8 @@
 # target_tracker       - one row per State/UT per target month (Aug'26-Feb'27)
 #                        with the achieved / not achieved / in progress /
 #                        upcoming status the HTML's Target Tracker computes.
+#
+# Counts use Indian digit grouping (1,30,00,000) via value_format.
 # ============================================================================
 
 view: fact_state_snapshot {
@@ -105,6 +107,7 @@ view: fact_state_snapshot {
 
   # HTML tableMismatchFor(): Table 1 status and Table 2 count disagree.
   dimension: mismatch_note {
+    hidden: yes
     type: string
     label: "Data quality note"
     sql: NULLIF(CONCAT(
@@ -120,6 +123,7 @@ view: fact_state_snapshot {
   }
 
   dimension: has_mismatch {
+    hidden: yes
     type: yesno
     sql: ${mismatch_note} IS NOT NULL ;;
     label: "Has Table 1 / Table 2 mismatch"
@@ -131,70 +135,70 @@ view: fact_state_snapshot {
     type: number
     sql: SAFE_CAST(${TABLE}.smt_trained AS INT64) ;;
     label: "SMTs trained"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: smt_batches_value {
     type: number
     sql: SAFE_CAST(${TABLE}.smt_batches AS INT64) ;;
     label: "SMT batches conducted"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: one_day_value {
     type: number
     sql: SAFE_CAST(${TABLE}.one_day_trained AS INT64) ;;
     label: "One-Day participants trained"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: one_day_batches_value {
     type: number
     sql: SAFE_CAST(${TABLE}.one_day_batches AS INT64) ;;
     label: "One-Day batches conducted"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: frontline_value {
     type: number
     sql: SAFE_CAST(${TABLE}.frontline_target AS INT64) ;;
     label: "Minimum Target Frontline Workers"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: slt_required_value {
     type: number
     sql: SAFE_CAST(${TABLE}.slt_required AS INT64) ;;
     label: "Minimum Total SLTs Reqd"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: smt_required_value {
     type: number
     sql: SAFE_CAST(${TABLE}.smt_required AS INT64) ;;
     label: "Minimum Total SMTs Reqd"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: smt_batches_required_value {
     type: number
     sql: SAFE_CAST(${TABLE}.smt_batches_required AS INT64) ;;
     label: "Minimum Total SMT Batches Reqd"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: slt_batches_required_value {
     type: number
     sql: SAFE_CAST(${TABLE}.slt_batches_required AS INT64) ;;
     label: "SLT batches required"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: smt_till_aug_value {
     type: number
     sql: SAFE_CAST(${TABLE}.smt_trained_till_aug AS INT64) ;;
     label: "SMT Trained till Aug'26 (actual)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: slt_trained_text {
@@ -235,6 +239,7 @@ view: fact_state_snapshot {
   }
 
   measure: states_with_mismatch {
+    hidden: yes
     type: count
     filters: [has_mismatch: "yes"]
     label: "States / UTs with a data quality note"
@@ -252,70 +257,70 @@ view: fact_state_snapshot {
     type: sum
     sql: ${smt_value} ;;
     label: "SMTs trained"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: smt_batches {
     type: sum
     sql: ${smt_batches_value} ;;
     label: "SMT batches conducted"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: one_day_trained {
     type: sum
     sql: ${one_day_value} ;;
     label: "One-Day participants trained"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: one_day_batches {
     type: sum
     sql: ${one_day_batches_value} ;;
     label: "One-Day batches conducted"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: frontline_target {
     type: sum
     sql: ${frontline_value} ;;
     label: "Minimum Target Frontline Workers"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: slt_required {
     type: sum
     sql: ${slt_required_value} ;;
     label: "Minimum Total SLTs Reqd"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: smt_required {
     type: sum
     sql: ${smt_required_value} ;;
     label: "Minimum Total SMTs Reqd"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: smt_batches_required {
     type: sum
     sql: ${smt_batches_required_value} ;;
     label: "Minimum Total SMT Batches Reqd"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: slt_batches_required {
     type: sum
     sql: ${slt_batches_required_value} ;;
     label: "SLT batches required"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: smt_trained_till_aug {
     type: sum
     sql: ${smt_till_aug_value} ;;
     label: "SMT Trained till Aug'26 (actual)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: slt_trained {
@@ -330,7 +335,7 @@ view: fact_state_snapshot {
     sql: 13000000 ;;
     label: "Overall programme target (officials)"
     description: "1,30,00,000 officials (1.3 crore), per the programme roadmap."
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: pct_of_programme_target {
@@ -345,6 +350,39 @@ view: fact_state_snapshot {
     sql: SAFE_DIVIDE(${one_day_trained}, ${programme_target}) * 100 ;;
     label: "Progress to 1.3 crore (%)"
     value_format: "0.000"
+  }
+
+  measure: programme_still_to_reach {
+    type: number
+    sql: GREATEST(${programme_target} - ${one_day_trained}, 0) ;;
+    label: "Still to reach (1.3 crore)"
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
+  }
+
+  # National dashboard headline card: officials reached, % of 1.3 crore, a
+  # progress bar and the number still to reach. Put programme_still_to_reach
+  # in the same query.
+  measure: programme_progress {
+    type: number
+    sql: ${one_day_trained} ;;
+    label: "Officials reached against 1.3 crore"
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
+    html:
+      <div style="display:flex;align-items:center;gap:28px;padding:6px 20px;text-align:left;font-size:14px;line-height:1.3;">
+        <div style="min-width:210px;">
+          <div style="font-size:13px;color:#707A88;">Officials reached (One-Day)</div>
+          <div style="font-size:34px;font-weight:600;color:#D97B34;">{{ rendered_value }}</div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:#1C2430;">
+            <span><b>{{ value | times: 100.0 | divided_by: 13000000 | round: 3 }}%</b> of the 1.3 crore target (1,30,00,000)</span>
+            <span style="color:#707A88;">Still to reach <b style="color:#12233B;">{{ fact_state_snapshot.programme_still_to_reach._rendered_value }}</b></span>
+          </div>
+          <div style="height:10px;background:#F1EEE6;border-radius:5px;margin-top:8px;overflow:hidden;">
+            <div style="height:100%;width:max(0.6%, {{ value | times: 100.0 | divided_by: 13000000 }}%);background:#D97B34;border-radius:5px;"></div>
+          </div>
+        </div>
+      </div> ;;
   }
 
   measure: pct_frontline_reached {
@@ -365,21 +403,21 @@ view: fact_state_snapshot {
     type: number
     sql: ${smt_required} - ${smt_trained} ;;
     label: "SMTs still to train"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: frontline_still_to_reach {
     type: number
     sql: ${frontline_target} - ${one_day_trained} ;;
     label: "Frontline officials still to reach"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: total_batches {
     type: number
     sql: ${smt_batches} + ${one_day_batches} ;;
     label: "Batches conducted (both programmes)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 }
 
@@ -439,25 +477,36 @@ view: target_tracker {
          END ;;
   }
 
+  dimension: month_window {
+    type: string
+    label: "Month window"
+    description: "This month / Last month / Other - lets tiles follow the calendar without a month filter."
+    sql: CASE
+           WHEN ${month_id} = FORMAT_DATE('%Y-%m', CURRENT_DATE('Asia/Kolkata')) THEN 'This month'
+           WHEN ${month_id} = FORMAT_DATE('%Y-%m', DATE_SUB(CURRENT_DATE('Asia/Kolkata'), INTERVAL 1 MONTH)) THEN 'Last month'
+           ELSE 'Other'
+         END ;;
+  }
+
   dimension: target_batches_value {
     type: number
     sql: ${TABLE}.target_batches ;;
     label: "SMT batch target"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: target_smts_value {
     type: number
     sql: ${TABLE}.target_smts ;;
     label: "SMT target (headcount)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: smt_trained_value {
     type: number
     sql: ${TABLE}.smt_trained ;;
     label: "SMTs trained (live actual)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   dimension: headcount_basis {
@@ -494,6 +543,35 @@ view: target_tracker {
            WHEN 'Target Not Achieved' THEN 1
            ELSE 0
          END ;;
+  }
+
+  # Status matrix cell (State x month): status pill plus the month's batch
+  # target. Encoded as status * 1,000,000 + batches so a pivoted table can
+  # show both in one cell.
+  dimension: status_order {
+    type: number
+    hidden: yes
+    sql: CASE ${target_status}
+           WHEN 'Target Achieved' THEN 4
+           WHEN 'In Progress' THEN 3
+           WHEN 'Target Not Achieved' THEN 2
+           WHEN 'Upcoming' THEN 1
+           ELSE 0
+         END ;;
+  }
+
+  measure: status_cell {
+    type: max
+    label: "Target status"
+    sql: ${status_order} * 1000000 + COALESCE(${target_batches_value}, 0) ;;
+    html:
+      {% assign s = value | divided_by: 1000000 | floor %}{% assign b = value | modulo: 1000000 | round %}
+      {% if s == 4 %}<span style="background:#CFE7D9;color:#2F7D57;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;">Achieved</span>
+      {% elsif s == 3 %}<span style="background:#F0E0BC;color:#AD7C25;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;">In progress</span>
+      {% elsif s == 2 %}<span style="background:#F1D4CE;color:#B04435;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;">Missed</span>
+      {% elsif s == 1 %}<span style="background:#EEEBE3;color:#707A88;padding:2px 8px;border-radius:10px;white-space:nowrap;">Upcoming</span>
+      {% else %}<span style="color:#B7B2A6;">–</span>{% endif %}
+      {% if s > 0 %}<span style="color:#707A88;font-size:11px;white-space:nowrap;"> {{ b }} batches</span>{% endif %} ;;
   }
 
   measure: status_code {
@@ -549,14 +627,14 @@ view: target_tracker {
     type: sum
     sql: ${target_batches_value} ;;
     label: "SMT batch target"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   measure: target_smts {
     type: sum
     sql: ${target_smts_value} ;;
     label: "SMT target (headcount)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 
   # Use with ONE target month selected (the dashboard filter enforces this);
@@ -565,6 +643,6 @@ view: target_tracker {
     type: sum
     sql: ${smt_trained_value} ;;
     label: "SMTs trained (live actual)"
-    value_format_name: decimal_0
+    value_format: "[>=10000000]##\,##\,##\,##0;[>=100000]##\,##\,##0;##,##0"
   }
 }

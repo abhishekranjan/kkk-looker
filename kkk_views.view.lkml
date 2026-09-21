@@ -28,8 +28,8 @@ view: dim_state {
     label: "State / UT"
     map_layer_name: india_states
     link: {
-      label: "Open {{ value }} in the State Drill-down tab"
-      url: "/dashboards/central_dashboard::central_dashboard?Drill-down+State={{ value | url_encode }}"
+      label: "Open the national dashboard for {{ value }}"
+      url: "/dashboards/central_dashboard::central_dashboard?State+%2F+UT={{ value | url_encode }}"
     }
   }
 
