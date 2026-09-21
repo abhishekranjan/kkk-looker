@@ -83,6 +83,15 @@ view: dim_state {
     sql: ${TABLE}.has_started ;;
   }
 
+  # State dashboard, "Download data" tab: one-click link to the full state
+  # data in Explore (Download > Excel from there).
+  dimension: download_full_state_data {
+    type: string
+    sql: ${state_name} ;;
+    label: "Download full state data"
+    html: <a href="/explore/state_dashboard/fact_batch_activity?fields=fact_batch_activity.activity_id,dim_state.state_name,district_map.district_label,district_map.reported_name,dim_group.group_name,dim_designation.designation_name,fact_batch_activity.batch_type,fact_batch_activity.batch_date,fact_batch_activity.batch_month,fact_batch_activity.implementation_status,fact_batch_activity.data_source,fact_batch_activity.participants_trained,fact_batch_activity.batch_count&amp;f[dim_state.state_name]={{ value | url_encode }}&amp;sorts=district_map.district_label,fact_batch_activity.batch_date&amp;limit=5000" target="_blank" style="color:#1D3557;font-weight:600;font-size:18px;">&#11015; Open full {{ value }} data in Explore</a> ;;
+  }
+
   measure: count_all {
     type: count_distinct
     sql: ${state_id} ;;
@@ -283,6 +292,20 @@ view: fact_batch_activity {
     label: "Batch date"
   }
 
+  # State dashboard: month buckets for the "By month" table and the export.
+  dimension: batch_month {
+    type: date_month
+    datatype: date
+    sql: SAFE_CAST(${TABLE}.batch_date AS DATE) ;;
+    label: "Batch month"
+  }
+
+  dimension: participants_value {
+    type: number
+    hidden: yes
+    sql: SAFE_CAST(${TABLE}.participants_trained AS INT64) ;;
+  }
+
   dimension: month_id {
     type: string
     hidden: yes
@@ -367,6 +390,49 @@ view: fact_batch_activity {
     sql: SAFE_CAST(${TABLE}.participants_trained AS INT64) ;;
     filters: [batch_type: "SLT"]
     label: "State lead trainers certified"
+  }
+
+  # ---- State dashboard measures --------------------------------------------
+
+  measure: avg_one_day_per_batch {
+    type: number
+    sql: SAFE_DIVIDE(${one_day_trained}, NULLIF(${one_day_batches}, 0)) ;;
+    label: "One-Day participants per batch"
+    value_format_name: decimal_1
+  }
+
+  measure: districts_with_one_day {
+    type: count_distinct
+    sql: CASE WHEN ${participants_value} > 0 THEN ${district_id} END ;;
+    filters: [batch_type: "One-Day"]
+    label: "Districts with One-Day training"
+    value_format_name: decimal_0
+  }
+
+  # Respects whatever programme filter the tile / query applies.
+  measure: designations_trained {
+    type: count_distinct
+    sql: CASE WHEN ${participants_value} > 0 THEN ${designation_id} END ;;
+    label: "Designations trained"
+    value_format_name: decimal_0
+  }
+
+  # Real SLT figures only - DEMO rows are never counted. Shows "Pending"
+  # until a reported SLT feed exists (the sum is NULL with no rows).
+  measure: slt_certified {
+    type: sum
+    sql: ${participants_value} ;;
+    filters: [batch_type: "SLT", data_source: "-DEMO"]
+    label: "State lead trainers certified"
+    value_format_name: decimal_0
+    html: {% if value == nil %}<span style="color:#707A88;">Pending</span>{% else %}{{ rendered_value }}{% endif %} ;;
+  }
+
+  # Count of DEMO SLT placeholder rows still in the load (should be 0).
+  measure: slt_demo_placeholder {
+    type: count
+    filters: [batch_type: "SLT", data_source: "DEMO"]
+    label: "SLT demo placeholder rows"
   }
 
   measure: pct_of_programme_target {
@@ -565,6 +631,13 @@ view: fact_assessment {
     sql: ${day1_score_value} - ${baseline_score_value} ;;
     value_format_name: decimal_1
     label: "Improvement"
+  }
+
+  measure: improvement_pct {
+    type: number
+    sql: SAFE_DIVIDE(${avg_day1_score} - ${avg_baseline_score}, NULLIF(${avg_baseline_score}, 0)) ;;
+    value_format_name: percent_1
+    label: "Improvement (% of baseline)"
   }
 
   # Participant-weighted versions: a batch of 900 counts more than a batch of 40.

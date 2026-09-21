@@ -3,16 +3,12 @@
 # Section B - National Implementation Dashboard (CBC, unrestricted)
 # Karmayogi Kartavya Karyakram
 #
-# Requires Looker 26.4+ (dashboard tabs). Nine tabs:
-#   1 National Overview  - Box 1 + every panel of the HTML Implementation tab
-#   2 SMT (2-day)        - every State Master Trainer view
-#   3 One-Day Programme  - every One-Day view, incl. the 1.3 crore tracker
-#   4 SLT                - State Lead Trainer requirement (trained = n/a)
-#   5 State Drill-down   - Boxes 3, 4, 5 (+ record, districts, assessment)
-#   6 Monthly SMT Targets- CBC target tab + HTML Target Tracker
-#   7 Roadmap 2027       - HTML Roadmap tab
-#   8 Assessments        - Box 9 and Box 10, kept separate
-#   9 Full Data Export   - Box 11
+# Requires Looker 26.4+ (dashboard tabs; Looker allows at most 5). Tabs:
+#   1 National Overview      - Box 1 + every panel of the HTML Implementation tab
+#   2 SMT · One-Day · SLT    - one band per programme (SMT, then One-Day, then SLT)
+#   3 State Drill-down       - Boxes 3, 4, 5 (+ record, districts, assessment)
+#   4 SMT Targets & Roadmap  - CBC Monthly SMT Targets + HTML Target Tracker, then Roadmap 2027
+#   5 Assessments & Export   - Box 9 and Box 10 (kept separate), then Box 11 full export
 #
 # Maps use Static Map (Regions): only the official TopoJSON is drawn, with no
 # third-party basemap, so no disputed-border lines appear.
@@ -35,22 +31,14 @@
   tabs:
   - name: overview
     label: National Overview
-  - name: smt
-    label: SMT (2-day)
-  - name: one_day
-    label: One-Day Programme
-  - name: slt
-    label: SLT
+  - name: programmes
+    label: SMT · One-Day · SLT
   - name: state_drill
     label: State Drill-down
-  - name: smt_targets
-    label: Monthly SMT Targets
-  - name: roadmap
-    label: Roadmap 2027
-  - name: assessment
-    label: Assessments
-  - name: export
-    label: Full Data Export
+  - name: targets_roadmap
+    label: SMT Targets & Roadmap
+  - name: assessment_export
+    label: Assessments & Export
   filters:
   - name: zone
     title: Zone
@@ -786,7 +774,7 @@
   - name: smt_header
     type: text
     body_text: <b>State Master Trainers (2-day programme)</b> &mdash; SMTs trained against the requirement to March 2027. SMT assessment results are on the Assessments tab (Box 10); monthly SMT targets are on the Monthly SMT Targets tab.
-    tab_name: smt
+    tab_name: programmes
     row: 0
     col: 0
     width: 24
@@ -806,7 +794,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 2
     col: 0
     width: 4
@@ -826,7 +814,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 2
     col: 4
     width: 4
@@ -850,7 +838,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 2
     col: 8
     width: 4
@@ -874,7 +862,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 2
     col: 12
     width: 4
@@ -894,7 +882,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 2
     col: 16
     width: 4
@@ -914,7 +902,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 2
     col: 20
     width: 4
@@ -939,7 +927,7 @@
     note_state: expanded
     note_display: below
     note_text: Darker = more SMTs trained. Pale = none yet. Always shows all 36 States/UTs.
-    tab_name: smt
+    tab_name: programmes
     row: 5
     col: 0
     width: 14
@@ -965,7 +953,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 5
     col: 14
     width: 10
@@ -988,7 +976,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 14
     col: 14
     width: 10
@@ -1024,7 +1012,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: smt
+    tab_name: programmes
     row: 23
     col: 0
     width: 24
@@ -1048,7 +1036,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: smt
+    tab_name: programmes
     row: 30
     col: 0
     width: 12
@@ -1075,7 +1063,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: smt
+    tab_name: programmes
     row: 30
     col: 12
     width: 12
@@ -1101,7 +1089,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt
+    tab_name: programmes
     row: 38
     col: 0
     width: 24
@@ -1113,8 +1101,8 @@
   - name: od_header
     type: text
     body_text: <b>One-Day Participant Programme</b> &mdash; frontline officials trained, against each State's frontline target and the 1.3 crore national target. One-Day assessment results are on the Assessments tab (Box 9).
-    tab_name: one_day
-    row: 0
+    tab_name: programmes
+    row: 50
     col: 0
     width: 24
     height: 2
@@ -1133,8 +1121,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 2
+    tab_name: programmes
+    row: 52
     col: 0
     width: 4
     height: 3
@@ -1153,8 +1141,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 2
+    tab_name: programmes
+    row: 52
     col: 4
     width: 4
     height: 3
@@ -1177,8 +1165,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 2
+    tab_name: programmes
+    row: 52
     col: 8
     width: 4
     height: 3
@@ -1197,8 +1185,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 2
+    tab_name: programmes
+    row: 52
     col: 12
     width: 4
     height: 3
@@ -1217,8 +1205,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 2
+    tab_name: programmes
+    row: 52
     col: 16
     width: 4
     height: 3
@@ -1237,8 +1225,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 2
+    tab_name: programmes
+    row: 52
     col: 20
     width: 4
     height: 3
@@ -1262,8 +1250,8 @@
     note_state: expanded
     note_display: below
     note_text: Darker = more One-Day participants trained. Pale = none yet. Always shows all 36 States/UTs.
-    tab_name: one_day
-    row: 5
+    tab_name: programmes
+    row: 55
     col: 0
     width: 14
     height: 18
@@ -1288,8 +1276,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 5
+    tab_name: programmes
+    row: 55
     col: 14
     width: 10
     height: 9
@@ -1311,8 +1299,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 14
+    tab_name: programmes
+    row: 64
     col: 14
     width: 10
     height: 9
@@ -1347,8 +1335,8 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: one_day
-    row: 23
+    tab_name: programmes
+    row: 73
     col: 0
     width: 24
     height: 7
@@ -1371,8 +1359,8 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: one_day
-    row: 30
+    tab_name: programmes
+    row: 80
     col: 0
     width: 12
     height: 8
@@ -1398,8 +1386,8 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: one_day
-    row: 30
+    tab_name: programmes
+    row: 80
     col: 12
     width: 12
     height: 8
@@ -1424,8 +1412,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: one_day
-    row: 38
+    tab_name: programmes
+    row: 88
     col: 0
     width: 24
     height: 12
@@ -1436,8 +1424,8 @@
   - name: slt_header
     type: text
     body_text: <b>State Lead Trainers</b> &mdash; requirement to March 2027 from the Target tab of the Sheet. The Sheet has no column for SLTs trained, so the current figure reads <i>Data not available</i> rather than a guessed number or zero.
-    tab_name: slt
-    row: 0
+    tab_name: programmes
+    row: 100
     col: 0
     width: 24
     height: 2
@@ -1456,8 +1444,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: slt
-    row: 2
+    tab_name: programmes
+    row: 102
     col: 0
     width: 8
     height: 3
@@ -1478,8 +1466,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: slt
-    row: 2
+    tab_name: programmes
+    row: 102
     col: 8
     width: 8
     height: 3
@@ -1498,8 +1486,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: slt
-    row: 2
+    tab_name: programmes
+    row: 102
     col: 16
     width: 8
     height: 3
@@ -1523,8 +1511,8 @@
     note_state: expanded
     note_display: below
     note_text: Darker = more State Lead Trainers required. Always shows all 36 States/UTs.
-    tab_name: slt
-    row: 5
+    tab_name: programmes
+    row: 105
     col: 0
     width: 12
     height: 16
@@ -1549,8 +1537,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: slt
-    row: 5
+    tab_name: programmes
+    row: 105
     col: 12
     width: 12
     height: 8
@@ -1573,8 +1561,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: slt
-    row: 13
+    tab_name: programmes
+    row: 113
     col: 12
     width: 12
     height: 8
@@ -1599,8 +1587,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: slt
-    row: 21
+    tab_name: programmes
+    row: 121
     col: 0
     width: 24
     height: 12
@@ -1934,7 +1922,7 @@
   - name: tg_header
     type: text
     body_text: <b>Monthly SMT targets</b> &mdash; straight from the Target tab of the Sheet. Pick a month in the <b>Target Month</b> filter. Achieved at any month counts; a concluded month that missed is red; the current month is in progress; later months are upcoming. March 2027 has no per-State column and is covered on the Roadmap 2027 tab.
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 0
     col: 0
     width: 24
@@ -1953,7 +1941,7 @@
     show_comparison: false
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 2
     col: 0
     width: 4
@@ -1972,7 +1960,7 @@
     show_comparison: false
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 2
     col: 4
     width: 4
@@ -1991,7 +1979,7 @@
     show_comparison: false
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 2
     col: 8
     width: 4
@@ -2010,7 +1998,7 @@
     show_comparison: false
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 2
     col: 12
     width: 4
@@ -2029,7 +2017,7 @@
     show_comparison: false
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 2
     col: 16
     width: 4
@@ -2052,7 +2040,7 @@
     comparison_label: SMTs (headcount)
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 2
     col: 20
     width: 4
@@ -2079,7 +2067,7 @@
     note_text: 'Green: achieved. Red: concluded and missed. Amber: current month, in progress. Grey: upcoming, or no target set. Always shows all 36 States/UTs.'
     listen:
       target_month: target_tracker.month_label
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 5
     col: 0
     width: 14
@@ -2113,7 +2101,7 @@
       target_month: target_tracker.month_label
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 5
     col: 14
     width: 10
@@ -2142,7 +2130,7 @@
       target_month: target_tracker.month_label
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 13
     col: 14
     width: 10
@@ -2174,7 +2162,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 23
     col: 0
     width: 24
@@ -2212,7 +2200,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 34
     col: 0
     width: 24
@@ -2249,7 +2237,7 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: smt_targets
+    tab_name: targets_roadmap
     row: 46
     col: 0
     width: 24
@@ -2261,8 +2249,8 @@
   - name: rm_header
     type: text
     body_text: <b>Building Capacity for March 2027</b> &mdash; State Lead Trainers, State Master Trainers and frontline reach required to complete the Karmayogi Kartavya Karyakram rollout, with what has been achieved so far against each.
-    tab_name: roadmap
-    row: 0
+    tab_name: targets_roadmap
+    row: 53
     col: 0
     width: 24
     height: 2
@@ -2281,8 +2269,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 2
+    tab_name: targets_roadmap
+    row: 55
     col: 0
     width: 4
     height: 4
@@ -2303,8 +2291,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 2
+    tab_name: targets_roadmap
+    row: 55
     col: 4
     width: 4
     height: 4
@@ -2323,8 +2311,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 2
+    tab_name: targets_roadmap
+    row: 55
     col: 8
     width: 4
     height: 4
@@ -2347,8 +2335,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 2
+    tab_name: targets_roadmap
+    row: 55
     col: 12
     width: 4
     height: 4
@@ -2367,8 +2355,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 2
+    tab_name: targets_roadmap
+    row: 55
     col: 16
     width: 4
     height: 4
@@ -2391,16 +2379,16 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 2
+    tab_name: targets_roadmap
+    row: 55
     col: 20
     width: 4
     height: 4
   - name: rm_timeline_header
     type: text
     body_text: '<b>Timeline</b> &mdash; Aug 2026: SMT target tracking &rarr; Sep 2026: continued trainer expansion &rarr; Mar 2027: frontline target'
-    tab_name: roadmap
-    row: 6
+    tab_name: targets_roadmap
+    row: 59
     col: 0
     width: 24
     height: 1
@@ -2422,8 +2410,8 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     comparison_label: of all States/UTs
-    tab_name: roadmap
-    row: 7
+    tab_name: targets_roadmap
+    row: 60
     col: 0
     width: 8
     height: 3
@@ -2445,8 +2433,8 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     comparison_label: of all States/UTs
-    tab_name: roadmap
-    row: 7
+    tab_name: targets_roadmap
+    row: 60
     col: 8
     width: 8
     height: 3
@@ -2465,8 +2453,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 7
+    tab_name: targets_roadmap
+    row: 60
     col: 16
     width: 8
     height: 3
@@ -2491,8 +2479,8 @@
     listen:
       zone: dim_state.zone
       state: dim_state.state_name
-    tab_name: roadmap
-    row: 10
+    tab_name: targets_roadmap
+    row: 63
     col: 0
     width: 24
     height: 7
@@ -2503,7 +2491,7 @@
   - name: as_header
     type: text
     body_text: '<b>Assessment and analysis</b> &mdash; the two programmes are assessed separately: a different audience and a different instrument, so their numbers are never merged. <b>All scores are DEMO</b> until the assessment feed arrives.'
-    tab_name: assessment
+    tab_name: assessment_export
     row: 0
     col: 0
     width: 24
@@ -2511,7 +2499,7 @@
   - name: as_box9_header
     type: text
     body_text: <b>Box 9 · One-Day participant programme</b> &mdash; baseline survey, day-1 assessment, and the improvement between them
-    tab_name: assessment
+    tab_name: assessment_export
     row: 2
     col: 0
     width: 24
@@ -2534,7 +2522,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 3
     col: 0
     width: 6
@@ -2557,7 +2545,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 3
     col: 6
     width: 6
@@ -2580,7 +2568,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 3
     col: 12
     width: 6
@@ -2603,7 +2591,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 3
     col: 18
     width: 6
@@ -2629,7 +2617,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 6
     col: 0
     width: 14
@@ -2655,7 +2643,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 6
     col: 14
     width: 10
@@ -2684,7 +2672,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 14
     col: 0
     width: 24
@@ -2692,7 +2680,7 @@
   - name: as_box10_header
     type: text
     body_text: <b>Box 10 · State Master Trainer programme</b> &mdash; certification outcome of the 2-day programme
-    tab_name: assessment
+    tab_name: assessment_export
     row: 21
     col: 0
     width: 24
@@ -2715,7 +2703,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 22
     col: 0
     width: 6
@@ -2738,7 +2726,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 22
     col: 6
     width: 6
@@ -2761,7 +2749,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 22
     col: 12
     width: 6
@@ -2784,7 +2772,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 22
     col: 18
     width: 6
@@ -2811,7 +2799,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 25
     col: 0
     width: 14
@@ -2840,7 +2828,7 @@
       zone: dim_state.zone
       state: dim_state.state_name
       batch_date: dim_date.date
-    tab_name: assessment
+    tab_name: assessment_export
     row: 25
     col: 14
     width: 10
@@ -2852,8 +2840,8 @@
   - name: ex_header
     type: text
     body_text: '<b>Full data export</b> &mdash; one button, everything: dashboard menu (&#8942;) &rarr; <b>Download</b> &rarr; CSV gives a zip with one file per tile below. No filter is required first and none applies to this tab. Each tile can also be downloaded on its own, or the dashboard scheduled to an inbox.'
-    tab_name: export
-    row: 0
+    tab_name: assessment_export
+    row: 33
     col: 0
     width: 24
     height: 2
@@ -2875,8 +2863,8 @@
     header_font_size: '12'
     rows_font_size: '12'
     show_totals: true
-    tab_name: export
-    row: 2
+    tab_name: assessment_export
+    row: 35
     col: 0
     width: 24
     height: 10
@@ -2896,8 +2884,8 @@
     header_text_alignment: left
     header_font_size: '12'
     rows_font_size: '12'
-    tab_name: export
-    row: 12
+    tab_name: assessment_export
+    row: 45
     col: 0
     width: 24
     height: 8
@@ -2917,8 +2905,8 @@
     header_text_alignment: left
     header_font_size: '12'
     rows_font_size: '12'
-    tab_name: export
-    row: 20
+    tab_name: assessment_export
+    row: 53
     col: 0
     width: 24
     height: 8
@@ -2938,8 +2926,8 @@
     header_text_alignment: left
     header_font_size: '12'
     rows_font_size: '12'
-    tab_name: export
-    row: 28
+    tab_name: assessment_export
+    row: 61
     col: 0
     width: 24
     height: 8

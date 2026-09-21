@@ -418,6 +418,8 @@
     model: state_dashboard
     explore: fact_batch_activity
     fields: [fact_batch_activity.districts_with_one_day, fact_batch_activity.designations_trained]
+    filters:
+      fact_batch_activity.batch_type: "One-Day"
     single_value_title: "Districts reached"
     show_comparison: true
     comparison_type: value
