@@ -143,10 +143,11 @@
       default_measure: { type: 'string', label: 'Colour by (measure name, e.g. fact_batch_activity.one_day_trained)', default: '', section: 'Map', order: 1 },
       color_low: { type: 'string', label: 'Low colour', display: 'color', default: '#DDEBE1', section: 'Map', order: 2 },
       color_high: { type: 'string', label: 'High colour', display: 'color', default: '#2F7D57', section: 'Map', order: 3 },
-      no_data_color: { type: 'string', label: 'No-data colour', display: 'color', default: '#FFFFFF', section: 'Map', order: 4 },
+      no_data_color: { type: 'string', label: 'No-data colour', display: 'color', default: '#EEEAE0', section: 'Map', order: 4 },
       show_labels: { type: 'boolean', label: 'Show numbers inside districts', default: true, section: 'Labels', order: 5 },
       label_mode: { type: 'string', label: 'Label content', display: 'select', values: [{ 'Number only': 'value' }, { 'District + number': 'name_value' }], default: 'value', section: 'Labels', order: 6 },
-      show_metric_buttons: { type: 'boolean', label: 'Show metric toggle buttons', default: true, section: 'Map', order: 7 }
+      show_metric_buttons: { type: 'boolean', label: 'Show metric toggle buttons', default: true, section: 'Map', order: 7 },
+      show_notes: { type: 'boolean', label: 'Show mapping notes (bottom right)', default: false, section: 'Map', order: 8 }
     },
 
     create: function (element) {
@@ -363,7 +364,7 @@
       });
       var kx = Math.cos(((minY + maxY) / 2) * Math.PI / 180);
       var padTop = (config.show_metric_buttons !== false && numMeas.length > 1) ? 40 : 14;
-      var padB = 84, padS = 48;
+      var padB = config.show_notes ? 84 : 58, padS = 40;
       var sc = Math.min((W - 2 * padS) / Math.max(1e-6, (maxX - minX) * kx), (H - padTop - padB) / Math.max(1e-6, (maxY - minY)));
       var offX = (W - (maxX - minX) * kx * sc) / 2;
       var offY = padTop + ((H - padTop - padB) - (maxY - minY) * sc) / 2;
@@ -380,7 +381,7 @@
       // colour scale
       var maxV = 0;
       feats.forEach(function (f) { var a = byKey[f.key]; var v = a ? a.vals[metric.name] : null; if (v !== null && v !== undefined && v > maxV) maxV = v; });
-      var low = config.color_low || '#DDEBE1', high = config.color_high || '#2F7D57', nd = config.no_data_color || '#FFFFFF';
+      var low = config.color_low || '#DDEBE1', high = config.color_high || '#2F7D57', nd = config.no_data_color || '#EEEAE0';
       function colorFor(v) {
         if (v === null || v === undefined) return nd;
         if (maxV <= 0) return low;
@@ -485,7 +486,8 @@
       if (unmappedRows && unmapped[metric.name]) notes.push(mLabel + ': ' + fmt(unmapped[metric.name]) + ' recorded at offices with no mappable district (listed in the table)');
       if (missingKeys.length) notes.push(missingKeys.length + ' district name(s) not found on the map: ' + missingKeys.slice(0, 3).map(function (k) { return k.split('|')[1]; }).join(', ') + (missingKeys.length > 3 ? '…' : ''));
       notes.push('Boundaries: Survey of India depiction · no base map · Ctrl/⌘ + scroll to zoom, drag to pan');
-      st.note.innerHTML = notes.map(esc).join('<br>');
+      st.note.innerHTML = config.show_notes ? notes.map(esc).join('<br>') : '';
+      st.note.style.display = config.show_notes ? '' : 'none';
 
       this._applyZoom();
       done();
