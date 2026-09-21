@@ -247,7 +247,7 @@
     sorts: [fact_state_snapshot.one_day_trained desc]
     limit: 500
     orientation: horizontal
-    sort: value
+    bar_order: value
     hide_zero: true
     top_n: 0
     show_total: true
@@ -271,7 +271,7 @@
     sorts: [dim_state.zone]
     limit: 500
     orientation: vertical
-    sort: data
+    bar_order: data
     hide_zero: false
     top_n: 0
     show_total: true
@@ -437,7 +437,7 @@
     sorts: [fact_state_snapshot.smt_still_required desc]
     limit: 500
     orientation: horizontal
-    sort: value
+    bar_order: value
     hide_zero: true
     top_n: 0
     show_total: true
@@ -461,7 +461,7 @@
     sorts: [dim_date.month_label]
     limit: 500
     orientation: vertical
-    sort: data
+    bar_order: data
     hide_zero: false
     top_n: 0
     show_total: true
@@ -485,7 +485,7 @@
     sorts: [fact_batch_activity.one_day_trained desc]
     limit: 500
     orientation: horizontal
-    sort: value
+    bar_order: value
     hide_zero: true
     top_n: 0
     show_total: true
@@ -509,7 +509,7 @@
     sorts: [fact_batch_activity.one_day_trained desc]
     limit: 500
     orientation: horizontal
-    sort: value
+    bar_order: value
     hide_zero: true
     top_n: 0
     show_total: true
@@ -582,7 +582,7 @@
     sorts: [fact_batch_activity.one_day_trained desc]
     limit: 500
     orientation: horizontal
-    sort: value
+    bar_order: value
     hide_zero: true
     top_n: 0
     show_total: true
