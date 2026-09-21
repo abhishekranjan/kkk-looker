@@ -11,6 +11,7 @@ include: "/**/central_dashboard.dashboard.lookml"
 # ---------------------------------------------------------------------------
 # Map layers. Defined in the model (not only the manifest) with an absolute
 # path, so they resolve no matter which folder this model file sits in.
+# india_districts is keyed "State|District" (see district_map.map_key).
 # ---------------------------------------------------------------------------
 map_layer: india_states {
   file: "/india_states.topojson"
@@ -22,7 +23,7 @@ map_layer: india_states {
 map_layer: india_districts {
   file: "/india_districts.topojson"
   format: topojson
-  property_key: "district"
+  property_key: "key"
   property_label_key: "district"
 }
 
