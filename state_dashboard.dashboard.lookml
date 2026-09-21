@@ -3,9 +3,9 @@
 # Section A - State Dashboard - Karmayogi Kartavya Karyakram
 #
 # Built box by box from "KKK - State Dashboard Instructions":
-#   Box 1 Header ............ tab "State overview"  (state dropdown = filter,
-#                             logged-in role, district map with SMT + 1-Day,
-#                             Download Full State Data button)
+#   Box 1 Header ............ State / UT filter in the filter bar; district
+#                             map with SMT + 1-Day on "State overview";
+#                             full state data on the "Download data" tab
 #   Box 2 Detailed .......... tab "State overview"  (totals strip, state row,
 #                             district table with Download + map beside it)
 #   Box 3 Activity trend .... tab "1-Day programme and assessment"
@@ -13,8 +13,9 @@
 #   Box 5 Designation-wise .. tab "1-Day programme and assessment"
 #   Box 6 Assessment ........ tab "1-Day programme and assessment" (Box 6 is
 #                             about the 1-day programme only, so it sits here)
-# Extra (more than the doc asks, never less): full-screen "District map" tab,
-# "SMT and SLT programmes" tab, "Download data" tab.
+# Extra (more than the doc asks, never less): large district map with a
+# placement table on "State overview", "SMT and SLT programmes" tab,
+# "Download data" tab.
 # Looker allows at most 5 tabs per dashboard.
 #
 # NO ACCESS RESTRICTION: any user can pick any state; every tab is visible.
@@ -41,8 +42,6 @@
   tabs:
   - name: State overview
     label: State overview
-  - name: District map
-    label: District map
   - name: 1-Day programme and assessment
     label: 1-Day programme and assessment
   - name: SMT and SLT programmes
@@ -97,97 +96,20 @@
   elements:
 
   # =================================================================
-  # TAB: STATE OVERVIEW  - Box 1 (header) and Box 2 (detailed)
+  # TAB: STATE OVERVIEW  - Box 1 (header) and Box 2 (detailed), district map
   # =================================================================
-
-  - name: ov_box1_header
-    type: text
-    tab_name: State overview
-    title_text: "Box 1 · Header"
-    body_text: |-
-      Pick the **State / UT** in the filter bar above (defaults to Odisha). Every tile on every tab follows it.
-      The **District** filter narrows to one or more districts; clicking a district on the map does the same for this page.
-    row: 0
-    col: 0
-    width: 24
-    height: 2
-
-  - name: ov_state_card
-    title: "Selected State / UT"
-    type: looker_single_record
-    tab_name: State overview
-    model: state_dashboard
-    explore: fact_batch_activity
-    fields: [dim_state.state_name, dim_state.state_type, dim_state.zone, dim_state.implementation_status, dim_state.programme_coordinator]
-    sorts: [dim_state.state_name]
-    limit: 1
-    show_view_names: false
-    listen:
-      state: dim_state.state_name
-    row: 2
-    col: 0
-    width: 8
-    height: 5
-
-  - name: ov_logged_in_role
-    title: "Logged-in role"
-    type: single_value
-    tab_name: State overview
-    model: state_dashboard
-    explore: current_user_access
-    fields: [current_user_access.logged_in_as]
-    limit: 1
-    show_single_value_title: false
-    show_comparison: false
-    note_state: collapsed
-    note_display: hover
-    note_text: "Read from sec_user_state_access for the signed-in email. Display only - nothing is restricted yet."
-    row: 2
-    col: 8
-    width: 8
-    height: 5
-
-  - name: ov_download_button
-    type: button
-    tab_name: State overview
-    rich_content_json: '{"text": "Download Full State Data (Excel)", "description": "Opens the Download data tab - every row for the selected state, ready for Excel.", "newTab": false, "alignment": "center", "size": "large", "style": "FILLED", "color": "#12233B", "targetTabName": "Download data", "href": ""}'
-    row: 2
-    col: 16
-    width: 8
-    height: 2
-
-  - name: ov_download_link
-    title: "Or open this state's data in Explore"
-    type: single_value
-    tab_name: State overview
-    model: state_dashboard
-    explore: fact_batch_activity
-    fields: [dim_state.download_full_state_data]
-    sorts: [dim_state.download_full_state_data]
-    limit: 1
-    show_single_value_title: false
-    show_comparison: false
-    note_state: collapsed
-    note_display: hover
-    note_text: "In the Explore that opens: gear menu > Download > Excel spreadsheet."
-    listen:
-      state: dim_state.state_name
-    row: 4
-    col: 16
-    width: 8
-    height: 3
 
   - name: ov_box2_header
     type: text
     tab_name: State overview
-    title_text: "Box 2 · Detailed"
+    title_text: "Detailed"
     body_text: |-
       The state's own numbers as they stand in the source. **Total SLT is not tracked yet, so it reads Pending** rather than a guessed number.
-      The totals strip is simply the district table added up. **Total Batches = one-day batches taken by SMTs.**
-    row: 7
+      The totals strip is the district table added up. **Total Batches = one-day batches taken by SMTs.**
+    row: 0
     col: 0
     width: 24
-    height: 2
+    height: 4
 
   - name: ov_total_slt
     title: "Total SLT"
@@ -208,7 +130,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 9
+    row: 4
     col: 0
     width: 6
     height: 3
@@ -230,7 +152,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 9
+    row: 4
     col: 6
     width: 6
     height: 3
@@ -252,7 +174,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 9
+    row: 4
     col: 12
     width: 6
     height: 3
@@ -277,7 +199,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 9
+    row: 4
     col: 18
     width: 6
     height: 3
@@ -305,13 +227,16 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 12
+    row: 7
     col: 0
     width: 24
     height: 3
 
   - name: ov_district_map
     title: "District map · 1-Day Trained and SMTs (click a district to filter the table)"
+    note_state: collapsed
+    note_display: hover
+    note_text: "Survey of India boundaries, no base map. Buttons switch between 1-Day Trained, SMTs and batches. Zoom with + / −, Ctrl/Cmd + scroll or double-click; drag to pan; ⤢ fits the state. Districts created after 2011 are drawn inside their parent district (see the placement table below)."
     type: central_dashboard::kkk_district_map
     tab_name: State overview
     model: state_dashboard
@@ -325,16 +250,16 @@
     color_high: "#2F7D57"
     no_data_color: "#FFFFFF"
     show_labels: true
-    label_mode: value
+    label_mode: name_value
     show_metric_buttons: true
     listen:
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 15
+    row: 10
     col: 0
-    width: 13
-    height: 16
+    width: 15
+    height: 24
 
   - name: ov_district_table
     title: "District-wise"
@@ -367,59 +292,19 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 15
-    col: 13
-    width: 11
-    height: 16
+    row: 10
+    col: 15
+    width: 9
+    height: 24
 
   # =================================================================
-  # TAB: DISTRICT MAP  - large map for navigation
+  # (District map is part of State overview)
   # =================================================================
-
-  - name: dm_header
-    type: text
-    tab_name: District map
-    title_text: "District map"
-    body_text: |-
-      Boundaries follow the **Survey of India** depiction and are drawn **without any base-map tiles**, so no third-party border lines appear.
-      Use the buttons at the top to switch between **1-Day Trained**, **SMTs** and **batches**. Zoom with **+ / −**, **Ctrl/⌘ + scroll** or double-click; drag to pan; **⤢** fits the state again.
-      Hover a district for all figures; click it to filter the dashboard. Districts created after the 2011 boundary set are drawn inside their parent district (see the table below).
-    row: 0
-    col: 0
-    width: 24
-    height: 3
-
-  - name: dm_map_large
-    title: "District map · numbers inside each district"
-    type: central_dashboard::kkk_district_map
-    tab_name: District map
-    model: state_dashboard
-    explore: fact_batch_activity
-    fields: [dim_state.state_name, district_map.map_key, fact_batch_activity.one_day_trained,
-             fact_batch_activity.smt_trained, fact_batch_activity.one_day_batches,
-             fact_batch_activity.smt_batches, district_map.reported_as]
-    sorts: [district_map.map_key]
-    limit: 1000
-    default_measure: fact_batch_activity.one_day_trained
-    color_low: "#DDEBE1"
-    color_high: "#2F7D57"
-    no_data_color: "#FFFFFF"
-    show_labels: true
-    label_mode: name_value
-    show_metric_buttons: true
-    listen:
-      state: dim_state.state_name
-      district: district_map.district_label
-      batch_date: fact_batch_activity.batch_date
-    row: 3
-    col: 0
-    width: 24
-    height: 22
 
   - name: dm_placement_table
     title: "How each reported district is placed on the map"
     type: looker_grid
-    tab_name: District map
+    tab_name: State overview
     model: state_dashboard
     explore: fact_batch_activity
     fields: [district_map.district_label, district_map.reported_name, district_map.map_district, district_map.match_note,
@@ -442,7 +327,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 25
+    row: 34
     col: 0
     width: 24
     height: 9
@@ -456,11 +341,12 @@
     tab_name: 1-Day programme and assessment
     title_text: "1-Day programme · this state only"
     body_text: |-
-      One-day participant training, run by the state's master trainers (SMTs). Box 3 is the activity trend, Box 4 splits the same participants by service group, Box 5 by designation.
+      One-day participant training, run by the state's master trainers (SMTs): activity trend, then the same participants by service group and by designation.
+      The assessment of this programme (baseline against day-1) is at the bottom of this tab.
     row: 0
     col: 0
     width: 24
-    height: 2
+    height: 4
 
   - name: od_trained
     title: "1-Day Trained"
@@ -478,7 +364,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 4
     col: 0
     width: 6
     height: 3
@@ -499,7 +385,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 4
     col: 6
     width: 6
     height: 3
@@ -520,7 +406,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 4
     col: 12
     width: 6
     height: 3
@@ -544,13 +430,13 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 4
     col: 18
     width: 6
     height: 3
 
   - name: od_box3_trend
-    title: "Box 3 · Activity trend - Batches and 1-Day Trained, by date"
+    title: "Activity trend - Batches and 1-Day Trained, by date"
     type: looker_line
     tab_name: 1-Day programme and assessment
     model: state_dashboard
@@ -603,7 +489,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 5
+    row: 7
     col: 0
     width: 16
     height: 9
@@ -631,13 +517,13 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 5
+    row: 7
     col: 16
     width: 8
     height: 9
 
   - name: od_box4_group_bar
-    title: "Box 4 · Group-wise - 1-Day Trained by service group"
+    title: "Group-wise - 1-Day Trained by service group"
     type: looker_bar
     tab_name: 1-Day programme and assessment
     model: state_dashboard
@@ -660,13 +546,13 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 14
+    row: 16
     col: 0
     width: 14
     height: 8
 
   - name: od_box4_group_list
-    title: "Box 4 · Group-wise list"
+    title: "Group-wise list"
     type: looker_grid
     tab_name: 1-Day programme and assessment
     model: state_dashboard
@@ -688,13 +574,13 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 14
+    row: 16
     col: 14
     width: 10
     height: 8
 
   - name: od_box5_designation_bar
-    title: "Box 5 · Designation-wise - top 20 by 1-Day Trained"
+    title: "Designation-wise - top 20 by 1-Day Trained"
     type: looker_bar
     tab_name: 1-Day programme and assessment
     model: state_dashboard
@@ -718,13 +604,13 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 22
+    row: 24
     col: 0
     width: 14
     height: 11
 
   - name: od_box5_designation_list
-    title: "Box 5 · Designation-wise list (all designations)"
+    title: "Designation-wise list (all designations)"
     type: looker_grid
     tab_name: 1-Day programme and assessment
     model: state_dashboard
@@ -748,7 +634,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 22
+    row: 24
     col: 14
     width: 10
     height: 11
@@ -776,7 +662,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 33
+    row: 35
     col: 0
     width: 24
     height: 9
@@ -795,7 +681,7 @@
     row: 0
     col: 0
     width: 24
-    height: 2
+    height: 4
 
   - name: smt_certified
     title: "Total SMTs certified"
@@ -813,7 +699,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 4
     col: 0
     width: 6
     height: 3
@@ -834,7 +720,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 2
+    row: 4
     col: 6
     width: 6
     height: 3
@@ -856,7 +742,7 @@
     custom_color: "#AD7C25"
     listen:
       state: dim_state.state_name
-    row: 2
+    row: 4
     col: 12
     width: 6
     height: 3
@@ -878,7 +764,7 @@
     custom_color: "#2F7D57"
     listen:
       state: dim_state.state_name
-    row: 2
+    row: 4
     col: 18
     width: 6
     height: 3
@@ -934,7 +820,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 5
+    row: 7
     col: 0
     width: 13
     height: 8
@@ -965,7 +851,7 @@
     note_text: "Actual = monthly split of the cumulative SMT total (split is demo)."
     listen:
       state: dim_state.state_name
-    row: 5
+    row: 7
     col: 13
     width: 11
     height: 8
@@ -996,7 +882,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 13
+    row: 15
     col: 0
     width: 12
     height: 11
@@ -1025,7 +911,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 13
+    row: 15
     col: 12
     width: 12
     height: 11
@@ -1056,7 +942,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 24
+    row: 26
     col: 0
     width: 24
     height: 7
@@ -1072,10 +958,10 @@
     body_text: |-
       **Total SLT is not tracked yet** - the source has no SLT certification feed, so it reads **Pending** rather than a guessed number.
       The requirement to March 2027 comes from the state plan.
-    row: 31
+    row: 33
     col: 0
     width: 24
-    height: 2
+    height: 4
 
   - name: slt_certified
     title: "Total SLT"
@@ -1092,7 +978,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 33
+    row: 37
     col: 0
     width: 8
     height: 4
@@ -1111,7 +997,7 @@
     custom_color: "#AD7C25"
     listen:
       state: dim_state.state_name
-    row: 33
+    row: 37
     col: 8
     width: 8
     height: 4
@@ -1130,7 +1016,7 @@
     custom_color: "#12233B"
     listen:
       state: dim_state.state_name
-    row: 33
+    row: 37
     col: 16
     width: 8
     height: 4
@@ -1154,7 +1040,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 37
+    row: 41
     col: 0
     width: 24
     height: 4
@@ -1166,15 +1052,14 @@
   - name: as_header
     type: text
     tab_name: 1-Day programme and assessment
-    title_text: "Box 6 · Assessment and analysis - 1-Day participant programme"
+    title_text: "Assessment and analysis - 1-Day participant programme"
     body_text: |-
-      Covers **only the 1-day participant programme** and is kept separate from the master-trainer certification (Box 10, central dashboard).
-      Baseline = assessed before the 1-day programme starts. Day-1 = assessed at the end of the day. Improvement = Day-1 minus Baseline.
-      Marked CBC-only in the brief; shown to everyone for now because no access restriction is applied. Scores are demo until an assessment feed exists.
-    row: 42
+      Covers **only the 1-day participant programme**, kept separate from master-trainer certification. Baseline = before the programme; Day-1 = end of the day; Improvement = Day-1 minus Baseline.
+      Shown to everyone for now (no access restriction). Scores are demo until an assessment feed exists.
+    row: 44
     col: 0
     width: 24
-    height: 3
+    height: 4
 
   - name: as_baseline
     title: "Baseline survey"
@@ -1193,7 +1078,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 45
+    row: 48
     col: 0
     width: 6
     height: 3
@@ -1215,7 +1100,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 45
+    row: 48
     col: 6
     width: 6
     height: 3
@@ -1240,7 +1125,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 45
+    row: 48
     col: 12
     width: 6
     height: 3
@@ -1262,7 +1147,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 45
+    row: 48
     col: 18
     width: 6
     height: 3
@@ -1294,7 +1179,7 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 48
+    row: 51
     col: 0
     width: 14
     height: 9
@@ -1325,13 +1210,13 @@
     listen:
       state: dim_state.state_name
       batch_date: fact_assessment.assessment_date
-    row: 48
+    row: 51
     col: 14
     width: 10
     height: 9
 
   # =================================================================
-  # TAB: DOWNLOAD DATA  - target of the Box 1 download button
+  # TAB: DOWNLOAD DATA  - full state data for Excel
   # =================================================================
 
   - name: dl_header
@@ -1339,12 +1224,12 @@
     tab_name: Download data
     title_text: "Download Full State Data (Excel)"
     body_text: |-
-      **To download:** open the ⋮ menu on the **Full state data** tile below > **Download** > format **Excel Spreadsheet** > results **All results**.
-      The whole dashboard can also be downloaded from the dashboard ⋮ menu. Each district's own rows download from the **District summary** tile.
+      **To download:** ⋮ menu on the **Full state data** tile > **Download** > **Excel Spreadsheet** > **All results**.
+      The whole dashboard downloads from the dashboard ⋮ menu. Each district's own rows download from the **District summary** tile.
     row: 0
     col: 0
     width: 24
-    height: 2
+    height: 4
 
   - name: dl_explore_link
     title: "Open in Explore"
@@ -1359,7 +1244,7 @@
     show_comparison: false
     listen:
       state: dim_state.state_name
-    row: 2
+    row: 4
     col: 0
     width: 24
     height: 2
@@ -1395,7 +1280,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 4
+    row: 6
     col: 0
     width: 24
     height: 9
@@ -1434,7 +1319,7 @@
       state: dim_state.state_name
       district: district_map.district_label
       batch_date: fact_batch_activity.batch_date
-    row: 13
+    row: 15
     col: 0
     width: 24
     height: 14

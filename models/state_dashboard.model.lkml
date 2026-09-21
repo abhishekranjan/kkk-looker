@@ -108,8 +108,3 @@ explore: fact_assessment {
     sql_on: ${fact_assessment.assessment_date} = ${dim_date.date} ;;
   }
 }
-
-explore: current_user_access {
-  label: "Logged-in user"
-  description: "The signed-in user's role from sec_user_state_access (display only)."
-}

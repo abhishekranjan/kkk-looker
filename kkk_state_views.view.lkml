@@ -7,7 +7,6 @@
 #                        matches the official-boundary map (india_districts)
 #   dim_month            one row per month (joining the daily dim_date on
 #                        month_id would multiply every target by ~30)
-#   current_user_access  the logged-in user's role from sec_user_state_access
 # ============================================================================
 
 view: district_map {
@@ -204,71 +203,5 @@ view: dim_month {
   dimension: quarter {
     type: string
     sql: ${TABLE}.quarter ;;
-  }
-}
-
-view: current_user_access {
-  # One row: the signed-in user's entry in sec_user_state_access.
-  # Display only - nothing on the dashboard is restricted by it.
-  derived_table: {
-    sql:
-      SELECT
-        u.email AS user_email,
-        COALESCE(m.role_name, 'Not mapped in sec_user_state_access') AS role_name,
-        m.assigned_state,
-        m.can_export,
-        m.can_see_assessment
-      FROM (SELECT {{ _user_attributes['email'] | sql_quote }} AS email) AS u
-      LEFT JOIN (
-        SELECT
-          LOWER(TRIM(a.user_email)) AS email,
-          a.state_name AS assigned_state,
-          r.role_name,
-          r.can_export,
-          r.can_see_assessment
-        FROM @{kkk_dataset}.sec_user_state_access AS a
-        LEFT JOIN @{kkk_dataset}.dim_role AS r
-          ON r.role_id = a.role_id
-        WHERE a.valid_to IS NULL
-           OR SAFE_CAST(CAST(a.valid_to AS STRING) AS DATE) >= CURRENT_DATE()
-        QUALIFY ROW_NUMBER() OVER (PARTITION BY LOWER(TRIM(a.user_email)) ORDER BY a.access_id) = 1
-      ) AS m
-        ON m.email = LOWER(TRIM(u.email)) ;;
-  }
-
-  dimension: user_email {
-    primary_key: yes
-    type: string
-    sql: ${TABLE}.user_email ;;
-    label: "Signed-in email"
-  }
-  dimension: role_name {
-    type: string
-    sql: ${TABLE}.role_name ;;
-    label: "Logged-in role"
-  }
-  dimension: assigned_state {
-    type: string
-    sql: ${TABLE}.assigned_state ;;
-    label: "Assigned State / UT"
-  }
-  dimension: can_export {
-    type: string
-    sql: ${TABLE}.can_export ;;
-  }
-  dimension: can_see_assessment {
-    type: string
-    sql: ${TABLE}.can_see_assessment ;;
-  }
-  # Box 1 - "Logged-in role" card
-  dimension: logged_in_as {
-    type: string
-    sql: CONCAT(${TABLE}.role_name, IFNULL(CONCAT(' - ', ${TABLE}.assigned_state), '')) ;;
-    label: "Logged-in role (card)"
-    html: <div style="line-height:1.4;text-align:center;">
-            <div style="font-size:12px;color:#707A88;">Logged-in role</div>
-            <div style="font-size:22px;font-weight:600;color:#12233B;">{{ value }}</div>
-            <div style="font-size:12px;color:#1C2430;">{{ _user_attributes['first_name'] }} {{ _user_attributes['last_name'] }} &middot; {{ _user_attributes['email'] }}</div>
-          </div> ;;
   }
 }
