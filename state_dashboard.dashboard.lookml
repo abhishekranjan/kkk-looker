@@ -1,30 +1,15 @@
-# Section A — State Dashboard (row-level secured to one state)
+# Section A — State Dashboard
 # Karmayogi Kartavya Karyakram
 #
 # Companion to the Section A design mock. Every element name here
 # matches the tile label shown by "Show LookML tile names".
 #
-# THIS FILE LIVES IN THE STATE MODEL ONLY.
-# SECURITY IS CURRENTLY OFF for testing (access_filter commented out in
-# the model, state filter defaults to Odisha and is not required).
-# When it is switched back on, the security lives in the model's explore:
+# NO ACCESS RESTRICTION for now - any user can pick any state from the
+# State / UT filter, and every section including assessment is shown.
 #
-#   explore: fact_batch_activity {
-#     access_filter: {
-#       field: dim_state.state_name
-#       user_attribute: assigned_state
-#     }
-#   }
-#
-# Because the filter sits on the explore, a nodal officer cannot widen
-# it from the dashboard, cannot reach another state by editing the URL,
-# and cannot total the nation. The `state` filter below exists only so
-# the state name can be shown in titles and so a CBC user opening the
-# same dashboard can switch states.
-#
-# Box 6 of the spec (assessment) is marked CBC-only, so fact_assessment
-# is NOT joined into the state model at all. The assessment tab here is
-# a text tile explaining where the analysis lives.
+# LookML dashboards render as one scrolling page - they have no tab
+# control. Each section opens with a text header so the design's tabs
+# read as distinct bands on the page.
 
 - dashboard: state_dashboard
   title: State Implementation Dashboard
@@ -48,9 +33,6 @@
   - name: state
     title: "State / UT"
     type: field_filter
-    # Testing: fixed default instead of the user attribute, and not required.
-    # Restore to:  default_value: "Your state"
-    #              required: true
     default_value: "Odisha"
     allow_multiple_values: false
     required: false
@@ -110,7 +92,7 @@
     name: state_header
     type: text
     body_text: |-
-      **Your state at a glance** — this state's own numbers
+      **State at a glance** — the selected state's own numbers
       as they stand in the source. Total state lead trainers is not tracked anywhere,
       so it reads as pending rather than as a guessed figure. The strip below is simply
       the district table added up.
@@ -205,15 +187,15 @@
     width: 6
     height: 3
 
-  # --- Point map from dim_district.location. Real coordinates for the
-  # --- four showcase states; other states fall back near the centroid.
+  # --- Filled district map. dim_district.district_name carries
+  # --- map_layer_name: india_districts (Odisha, Uttar Pradesh,
+  # --- Chhattisgarh and Karnataka are in the TopoJSON).
   - title: Districts
     name: district_activity
     model: state_dashboard
     explore: fact_batch_activity
     type: looker_map
-    fields: [dim_district.location, dim_district.district_name, fact_batch_activity.one_day_trained]
-    map_plot_mode: points
+    fields: [dim_district.district_name, fact_batch_activity.one_day_trained]
     map_position: fit_data
     map_scale_indicator: "off"
     map_value_colors: ["#F2EFE6", "#2F7D57"]
@@ -424,35 +406,103 @@
     height: 8
 
   # ===============================================================
-  # BOX 6 — assessment. CBC only, so no explore is granted here.
-  # Third tab carries an explanation rather than a missing page.
+  # BOX 6 — assessment for the selected state
   # ===============================================================
 
   - title: Assessment and analysis
     name: assess_header
     type: text
     body_text: |-
-      **Assessment and analysis** — covered by Box 6 of the specification, which is
-      marked for the Capacity Building Commission only.
+      **Assessment and analysis** — one-day participants are assessed before and after
+      the day; master trainers are assessed for certification. The two are kept apart:
+      a different audience and a different instrument.
     row: 39
     col: 0
     width: 24
     height: 2
 
-  - title: Baseline, day-1 and improvement
-    name: assessment_restricted
-    type: text
-    body_text: |-
-      🔒 **Held by the Capacity Building Commission**
-
-      Baseline results, day-1 results and the improvement between them are analysed
-      centrally for the one-day participant programme. `fact_assessment` is not joined
-      into the state model, so these numbers are not available on this dashboard.
-      Your CBC programme contact can share this state's extract.
-
-      If the Commission later opens this up, the same three measures drop into this tab
-      filtered by the same `assigned_state` attribute that governs every other tile.
+  - title: Baseline score
+    name: one_day_baseline
+    model: state_dashboard
+    explore: fact_assessment
+    type: single_value
+    fields: [fact_assessment.avg_baseline_score]
+    filters:
+      fact_assessment.programme_type: "One-Day"
+    single_value_title: "One-day · average baseline"
+    value_format: "0.0"
+    custom_color_enabled: true
+    custom_color: "#707A88"
+    listen:
+      state: dim_state.state_name
+      date_range: dim_date.date
     row: 41
     col: 0
+    width: 8
+    height: 3
+
+  - title: Day-1 score
+    name: one_day_day1
+    model: state_dashboard
+    explore: fact_assessment
+    type: single_value
+    fields: [fact_assessment.avg_day1_score]
+    filters:
+      fact_assessment.programme_type: "One-Day"
+    single_value_title: "One-day · average day-1"
+    value_format: "0.0"
+    custom_color_enabled: true
+    custom_color: "#1D3557"
+    listen:
+      state: dim_state.state_name
+      date_range: dim_date.date
+    row: 41
+    col: 8
+    width: 8
+    height: 3
+
+  - title: Improvement
+    name: one_day_improvement
+    model: state_dashboard
+    explore: fact_assessment
+    type: single_value
+    fields: [fact_assessment.avg_improvement]
+    filters:
+      fact_assessment.programme_type: "One-Day"
+    single_value_title: "One-day · average improvement"
+    value_format: "+0.0"
+    custom_color_enabled: true
+    custom_color: "#2F7D57"
+    listen:
+      state: dim_state.state_name
+      date_range: dim_date.date
+    row: 41
+    col: 16
+    width: 8
+    height: 3
+
+  - title: Master trainer certification outcome
+    name: smt_certification_outcome
+    model: state_dashboard
+    explore: fact_assessment
+    type: looker_column
+    fields: [fact_assessment.programme_type, fact_assessment.certified_count, fact_assessment.not_certified_count]
+    filters:
+      fact_assessment.programme_type: "SMT"
+    sorts: [fact_assessment.programme_type]
+    stacking: normal
+    series_colors:
+      fact_assessment.certified_count: "#2F7D57"
+      fact_assessment.not_certified_count: "#B04435"
+    show_value_labels: true
+    legend_position: center
+    note_state: expanded
+    note_display: below
+    note_text: "Kept on its own tile so participant numbers never dilute the trainer result. Scores are demo - no assessment feed exists in the source yet."
+    listen:
+      state: dim_state.state_name
+      date_range: dim_date.date
+    row: 44
+    col: 0
     width: 24
-    height: 6
+    height: 7
