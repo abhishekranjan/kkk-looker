@@ -8,6 +8,24 @@ connection: "prj-kb-prd-looker-gcp-1014"
 include: "/**/*.view.lkml"
 include: "/**/central_dashboard.dashboard.lookml"
 
+# ---------------------------------------------------------------------------
+# Map layers. Defined in the model (not only the manifest) with an absolute
+# path, so they resolve no matter which folder this model file sits in.
+# ---------------------------------------------------------------------------
+map_layer: india_states {
+  file: "/india_states.topojson"
+  format: topojson
+  property_key: "st_nm"
+  property_label_key: "st_nm"
+}
+
+map_layer: india_districts {
+  file: "/india_districts.topojson"
+  format: topojson
+  property_key: "district"
+  property_label_key: "district"
+}
+
 # ============================================================================
 # Explores the dashboard expects, joined on the surrogate keys from the
 # kkk_dataset dataset.
