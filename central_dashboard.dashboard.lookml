@@ -9,10 +9,11 @@
 #   explore: fact_monthly_target  (joined to dim_state, dim_date)
 #   explore: fact_assessment      (joined to dim_state, dim_date)
 #
-# This file lives in the CENTRAL model only. The state model never
-# includes it, so a State Nodal Officer cannot reach these tiles even
-# by URL. Row-level security is enforced in the state model's
-# access_filter, not here.
+# This file lives in the CENTRAL model only.
+#
+# LookML dashboards render as one scrolling page - they have no tab
+# control. Each "TAB" block below opens with a text header so the five
+# sections of the design read as distinct bands on the page.
 
 - dashboard: central_dashboard
   title: National Implementation Dashboard
@@ -186,17 +187,14 @@
     width: 6
     height: 3
 
-  # --- Point map from dim_state.location (latitude/longitude). To switch
-  # --- to a filled choropleth later: add india_states.topojson + manifest,
-  # --- then change fields to [dim_state.state_name, ...] and drop
-  # --- map_plot_mode.
+  # --- Filled choropleth. dim_state.state_name carries map_layer_name:
+  # --- india_states, drawn from india_states.topojson via manifest.lkml.
   - title: Implementation status
     name: implementation_status_by_state
     model: central_dashboard
     explore: fact_batch_activity
     type: looker_map
-    fields: [dim_state.location, dim_state.state_name, fact_batch_activity.implementation_status_rank]
-    map_plot_mode: points
+    fields: [dim_state.state_name, fact_batch_activity.implementation_status_rank]
     map_position: fit_data
     map_scale_indicator: "off"
     map_value_colors: ["#D9D5C9", "#AD7C25", "#2F7D57"]
