@@ -1,5 +1,6 @@
 # ============================================================================
 # FILE: central_dashboard.model.lkml  (project root)
+# Section B — National model. Unrestricted, every State and UT.
 # ============================================================================
 
 connection: "prj-kb-prd-looker-gcp-1014"
