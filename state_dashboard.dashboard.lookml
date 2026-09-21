@@ -3,8 +3,8 @@
 # Section A - State Implementation Dashboard - Karmayogi Kartavya Karyakram
 #
 # Tabs (Looker 26.4+):
-#   1 State overview        - headline numbers, district map, district table
-#                             (State total row + per-district Download links)
+#   1 State overview        - headline numbers, district map, district ranking,
+#                             district report (State total row + Download links)
 #   2 1-Day programme       - activity by month, service group, designation,
 #                             and the 1-Day assessment (baseline vs day-1)
 #   3 SMT & SLT             - requirement to Mar '27, monthly target vs actual,
@@ -186,16 +186,40 @@
     col: 0
     width: 14
     height: 15
-  - name: ov_districts
-    title: District-wise (bottom row = State total)
+  - name: ov_ranking
+    title: District ranking
+    model: state_dashboard
+    explore: fact_batch_activity
+    type: "central_dashboard::kkk_switch_bars"
+    fields: [district_map.district_label, fact_batch_activity.one_day_trained, fact_batch_activity.smt_trained, fact_batch_activity.one_day_batches]
+    sorts: [fact_batch_activity.one_day_trained desc]
+    limit: 500
+    orientation: horizontal
+    bar_order: value
+    hide_zero: true
+    top_n: 0
+    show_total: true
+    default_measure: ""
+    labels: one_day_trained=1-Day trained;smt_trained=SMTs;one_day_batches=Batches
+    colors: "smt:#AD7C25,one_day:#2F7D57,designations:#1D3557,batches:#D97B34"
+    listen:
+      state: dim_state.state_name
+      district: district_map.district_label
+    tab_name: overview
+    row: 4
+    col: 14
+    width: 10
+    height: 15
+  - name: ov_report
+    title: District report - bottom row is the State total
     model: state_dashboard
     explore: fact_batch_activity
     type: looker_grid
-    fields: [district_map.district_label, fact_batch_activity.smt_trained, fact_batch_activity.one_day_batches, fact_batch_activity.one_day_trained, district_map.district_download]
+    fields: [district_map.district_label, fact_batch_activity.district_status, fact_batch_activity.smt_trained, fact_batch_activity.smt_batches, fact_batch_activity.one_day_batches, fact_batch_activity.one_day_trained, fact_batch_activity.avg_one_day_per_batch, fact_batch_activity.designations_trained, fact_batch_activity.last_one_day_date, district_map.district_download]
     sorts: [fact_batch_activity.one_day_trained desc, fact_batch_activity.smt_trained desc]
     limit: 5000
     show_view_names: false
-    show_row_numbers: false
+    show_row_numbers: true
     table_theme: white
     limit_displayed_rows: false
     header_text_alignment: left
@@ -207,10 +231,16 @@
     show_totals: true
     series_labels:
       district_map.district_label: District
+      fact_batch_activity.district_status: Status
       fact_batch_activity.smt_trained: SMTs
-      fact_batch_activity.one_day_batches: Batches
+      fact_batch_activity.smt_batches: 2-day batches
+      fact_batch_activity.one_day_batches: 1-Day batches
       fact_batch_activity.one_day_trained: 1-Day trained
+      fact_batch_activity.avg_one_day_per_batch: Per batch
+      fact_batch_activity.designations_trained: Designations
+      fact_batch_activity.last_one_day_date: Last 1-Day batch
       district_map.district_download: Download
+      share_of_state: Share of State 1-Day
     series_cell_visualizations:
       fact_batch_activity.one_day_trained:
         is_active: true
@@ -222,10 +252,22 @@
       state: dim_state.state_name
       district: district_map.district_label
     tab_name: overview
-    row: 4
-    col: 14
-    width: 10
-    height: 15
+    row: 19
+    col: 0
+    width: 24
+    height: 12
+    dynamic_fields:
+    - category: table_calculation
+      expression: ${fact_batch_activity.one_day_trained} / sum(${fact_batch_activity.one_day_trained})
+      label: Share of State 1-Day
+      value_format_name: percent_1
+      _kind_hint: measure
+      table_calculation: share_of_state
+      _type_hint: number
+    column_order: [district_map.district_label, fact_batch_activity.district_status, fact_batch_activity.smt_trained,
+                   fact_batch_activity.smt_batches, fact_batch_activity.one_day_batches, fact_batch_activity.one_day_trained,
+                   share_of_state, fact_batch_activity.avg_one_day_per_batch, fact_batch_activity.designations_trained,
+                   fact_batch_activity.last_one_day_date, district_map.district_download]
 
   # ---------------------------------------------------------------- 1-DAY PROGRAMME
   - name: od_trend
@@ -279,7 +321,53 @@
     row: 0
     col: 14
     width: 10
-    height: 11
+    height: 6
+  - name: od_last
+    title: Last 1-Day batch
+    model: state_dashboard
+    explore: fact_batch_activity
+    type: single_value
+    fields: [fact_batch_activity.last_one_day_date, fact_batch_activity.days_since_one_day]
+    show_single_value_title: true
+    single_value_title: Last 1-Day batch
+    title_hidden: true
+    custom_color_enabled: true
+    custom_color: "#D97B34"
+    show_comparison: true
+    comparison_type: value
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    comparison_label: days ago
+    listen:
+      state: dim_state.state_name
+      district: district_map.district_label
+    tab_name: one_day
+    row: 6
+    col: 14
+    width: 5
+    height: 5
+  - name: od_designations
+    title: Designations reached
+    model: state_dashboard
+    explore: fact_batch_activity
+    type: single_value
+    fields: [fact_batch_activity.designations_trained]
+    show_single_value_title: true
+    single_value_title: Designations reached
+    title_hidden: true
+    custom_color_enabled: true
+    custom_color: "#1D3557"
+    show_comparison: false
+    filters:
+      fact_batch_activity.batch_type: One-Day
+    listen:
+      state: dim_state.state_name
+      district: district_map.district_label
+    tab_name: one_day
+    row: 6
+    col: 19
+    width: 5
+    height: 5
   - name: od_designation
     title: By designation
     model: state_dashboard
